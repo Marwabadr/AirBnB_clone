@@ -4,6 +4,7 @@ Module for BaseModel class
 """
 import uuid
 from datetime import datetime
+from models import storage
 
 
 class BaseModel:
@@ -24,15 +25,17 @@ class BaseModel:
             self.id = str(uuid.uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            storage.new(self)  # Add this line to register the new instance
 
     def __str__(self):
         """Return a string representation of the object"""
         return "[{}] ({}) {}".format(
-                self.__class__.__name__, self.id, self.__dict__)
+            self.__class__.__name__, self.id, self.__dict__)
 
     def save(self):
         """Update the attribute updated_at with the current datetime"""
         self.updated_at = datetime.now()
+        storage.save()  # Add this line to save the updated state
 
     def to_dict(self):
         """
@@ -58,4 +61,4 @@ class BaseModel:
             bool: True if the instances are equal, False otherwise
         """
         return isinstance(
-                other, BaseModel) and self.to_dict() == other.to_dict()
+            other, BaseModel) and self.to_dict() == other.to_dict()
